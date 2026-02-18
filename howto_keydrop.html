@@ -201,6 +201,18 @@
       .grid-3{ grid-template-columns:1fr; }
     }
 
+    /* === 2-column grids (導入手順用) === */
+    .grid-2{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:16px;
+      margin-top:14px;
+      align-items:stretch;
+    }
+    @media (max-width: 980px){
+      .grid-2{ grid-template-columns:1fr; }
+    }
+
     .feature-num{
       font-weight:900;
       margin-bottom:6px;
@@ -443,31 +455,37 @@
           </div>
         </section>
 
-        <!-- 導入手順（3カラム） -->
+        <!-- 導入手順（2カラム） -->
         <section class="tab-panel" id="install">
           <h2>BOT導入手順</h2>
           <p class="muted">導入前に一度だけ行う手順です。</p>
 
           <div class="grid-3">
             <div class="card">
-              <div class="feature-num">①「KEYDROP」ロールを作る</div>
-              <p>コマンド実行に必要なロールです。</p>
-              <p class="muted">閲覧ロールはBOT関係なく、サーバーごとの運用方法に影響しません。</p>
+              <div class="feature-num">① 利用開始申請</div>
+              <p><span class="mono">/keydrop_apply</span> を実行します。</p>
+              <p class="muted">BOTの利用開始申請を行います。申請内容はKEYDROP BOT管理サーバーに送信されます。</p>
             </div>
 
             <div class="card">
-             <div class="feature-num">②利用開始申請</div>
-              <p>/keydrop_applyでBOTの利用開始申請をしてください</p>
-              <p class="muted">申請内容がKEYDROP BOT管理サーバーに送信されます</p>
+              <div class="feature-num">② 支払い</div>
+              <p>BOT使用料のお支払いをお願いします。</p>
+              <ul class="list">
+                <li>PayPay</li>
+                <li>Stripe（準備中）</li>
+              </ul>
             </div>
 
             <div class="card">
-              <div class="feature-num">③支払い</div>
-              <p>利用開始申請を送信します。</p>
-              <p class="muted">初回申請は <b>トライアル14日間</b> が開始されます。</p>
+              <div class="feature-num">③ 操作権限を設定</div>
+              <p>/apply_role を実行し、操作権限を与えるロールを設定してください。</p>
+              <p class="muted">この設定を行わない場合、以下のものは「各サーバーの管理者」のみ使用可能です。</p>
+              <ul class="list">
+                <li>運営用コマンド</li>
+                <li>運営用管理パネルのボタン</li>
+              </ul>
             </div>
           </div>
-
         </section>
 
         <!-- 使い方（3カラム＋スクショ） -->
@@ -475,26 +493,36 @@
           <h2>使い方</h2>
           <p class="muted">運用開始後の基本操作です。</p>
 
-          <div class="grid-3">
+          <div class="grid-2">
             <div class="card">
-              <div class="step-num">STEP 1</div>
-              <h3>運営用チャンネルで <span class="mono">/admin_panel</span> を実行</h3>
-              <p class="muted">管理パネルを出す</p>
-              <img src="使い方01.png" alt="使い方 STEP1（管理パネル）">
+              <div class="feature-num">STEP 1 管理パネルの設置</div>
+              <p>運営用チャンネルで <span class="mono">/admin_panel</span> を実行します。</p>
+              <img src="使い方01.png" alt="使い方 STEP 1（管理パネル）">
             </div>
 
             <div class="card">
-              <div class="step-num">STEP 2</div>
-              <h3>スクリム情報をカレンダーに登録</h3>
-              <p class="muted">開催情報を登録する</p>
-              <img src="使い方02.png" alt="使い方 STEP2（カレンダー登録）">
+              <div class="step-num">STEP 2　初期設定</div>
+              <h3>管理パネルの各ボタンで設定</h3>
+              <p class="muted">送信先チャンネルの設定や、キー形式の設定などを行います。</p>
+              <img src="使い方02.png" alt="使い方 STEP2（管ボタン）">
+              <ul class="list">
+                <li>キーホスト制限<br>　キーホスト申請可能なロールを制限</li>
+                <li>キー配布<br>　「自動」スクリム開始時間に自動送信<br>　「手動」カスタムキー配布（手動）ボタンで送信</li>
+              </ul>
             </div>
 
             <div class="card">
-              <div class="step-num">STEP 3</div>
-              <h3>管理パネルで送信先CHなどを設定</h3>
-              <p class="muted">各情報の送信先（CH/スレッド等）を指定する</p>
-              <img src="使い方03.png" alt="使い方 STEP3（送信先設定）">
+              <div class="step-num">STEP 3　スクリム情報登録</div>
+              <h3>カレンダーに登録します</h3>
+              <p class="muted">登録日・登録内容によって、キー配布が有効となります。</p>
+              <img src="使い方03.png" alt="使い方 STEP2（カレンダー）">
+            </div>
+
+            <div class="card">
+              <div class="step-num">STEP 4　操作対象の設定</div>
+              <h3>対象スクリム名を入力する</h3>
+              <p class="muted">カレンダー登録時の「大会名/スクリム名（開催団体名）と同じ情報を入力します。</p>
+              <img src="使い方04.png" alt="使い方 STEP3（送信先設定）">
             </div>
           </div>
         </section>
@@ -538,22 +566,20 @@
             </div>
           </div>
 
-          <!-- 下段：初回フリー｜大会スポット｜補足 -->
-          <div class="grid-3">
+          <!-- 下段：トライアル｜大会スポット -->
+          <div class="grid-2">
             <div class="card">
-              <h3>初回フリー</h3>
+              <h3>トライアル</h3>
               <div class="price">¥0</div>
               <p class="per">/ 14日間</p>
               <ul class="list">
                 <li>スクリム登録：<b>3件まで</b></li>
+                <li>初回限り</b></li>
               </ul>
-              <div class="note-box">
-                初回の <span class="mono">/keydrop_apply</span> 申請で開始します。
-              </div>
             </div>
 
             <div class="card">
-              <h3>大会スポット（要相談）</h3>
+              <h3>大会スポット（準備中）</h3>
               <p class="muted">
                 大会・大規模イベントなど、通常のスクリム運用とは異なる用途での利用については
                 <b>事前にご相談ください</b>。
@@ -565,13 +591,6 @@
               </ul>
             </div>
 
-            <div class="card">
-              <h3>補足</h3>
-              <ul class="list">
-                <li>「スクリム登録件数」＝カレンダーに登録する開催情報の件数</li>
-                <li>Type-B（新しいスクリムの形）は本料金（Type-A）には含まれません</li>
-              </ul>
-            </div>
           </div>
         </section>
 
@@ -686,7 +705,7 @@
           </form>
         </section>
 
-        <footer>© Scrim Keydrop Bot（仮）</footer>
+        <footer>© Scrim Keydrop Bot</footer>
       </section>
 
     </div>
