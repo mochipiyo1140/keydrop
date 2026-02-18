@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Scrim Keydrop Bot｜案内サイト</title>
+  <meta name="description" content="フォートナイト向けスクリム運営を支援するDiscord BOT（Type-A）" />
+
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --panel:#111827;
+      --panel2:#0f172a;
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --line:rgba(255,255,255,.10);
+      --accent:#60a5fa;
+      --accent2:#a78bfa;
+      --radius:18px;
+      --shadow:0 12px 30px rgba(0,0,0,.35);
+      --max:1200px;
+      --tabs-h:64px;
+      --gap:18px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family:system-ui,"Noto Sans JP",sans-serif;
+      background:
+        radial-gradient(900px 600px at 10% 0%, rgba(96,165,250,.18), transparent 55%),
+        radial-gradient(900px 600px at 90% 10%, rgba(167,139,250,.14), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      line-height:1.65;
+    }
+    a{ color:inherit; text-decoration:none; }
+    .wrap{ max-width:var(--max); margin:0 auto; padding:18px 20px 24px; }
+
+    /* === Layout === */
+    .layout{
+      display:grid;
+      grid-template-columns: 340px 1fr;
+      gap:var(--gap);
+      align-items:start;
+    }
+    @media (max-width: 980px){
+      .layout{ grid-template-columns: 1fr; }
+    }
+
+    /* === Cards === */
+    .card{
+      background:linear-gradient(180deg,var(--panel),var(--panel2));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:22px;
+    }
+    .muted{ color:var(--muted); }
+    h1{ font-size:32px; margin:0 0 10px; line-height:1.15; letter-spacing:-.2px; }
+    h2{ font-size:22px; margin:0 0 10px; }
+    h3{ font-size:16px; margin:0 0 6px; }
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+    }
+
+    .hr{
+      height:1px;
+      background:var(--line);
+      border:0;
+      margin:16px 0;
+    }
+    .note-box{
+      margin-top:14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      border-radius:14px;
+      padding:12px 14px;
+      color:var(--muted);
+      font-size:13.5px;
+    }
+
+    /* === Left (Hero) === */
+    .left{
+      position:sticky;
+      top:18px;
+      align-self:start;
+    }
+    @media (max-width: 980px){
+      .left{ position:static; }
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:14px;
+    }
+    .brand .logo{
+      font-weight:900;
+      letter-spacing:.2px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .dot{
+      width:10px;height:10px;border-radius:999px;
+      background:linear-gradient(180deg, rgba(96,165,250,1), rgba(167,139,250,1));
+      box-shadow:0 0 0 4px rgba(96,165,250,.12);
+    }
+
+    .cta{
+      background:linear-gradient(180deg,rgba(96,165,250,.28),rgba(96,165,250,.12));
+      border:1px solid rgba(96,165,250,.45);
+      border-radius:14px;
+      padding:10px 14px;
+      font-weight:900;
+      white-space:nowrap;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      cursor:pointer;
+    }
+    .cta:active{ transform:translateY(1px); }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      padding:6px 10px;
+      border-radius:999px;
+      width:max-content;
+      margin-bottom:10px;
+    }
+
+    /* === Right (Tabs + Content) === */
+    .right{ min-width:0; }
+
+    .tabs-bar{
+      position:sticky;
+      top:18px;
+      z-index:20;
+      height:var(--tabs-h);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:10px 12px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:rgba(11,15,23,.75);
+      backdrop-filter:blur(10px);
+      box-shadow:var(--shadow);
+      margin-bottom:14px;
+    }
+    @media (max-width: 980px){
+      .tabs-bar{ top:0; border-radius:0; margin:0 -20px 14px; }
+    }
+
+    .tabs{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .tab-btn{
+      background:none;
+      border:1px solid transparent;
+      color:var(--muted);
+      padding:7px 12px;
+      border-radius:12px;
+      font-size:14px;
+      cursor:pointer;
+      user-select:none;
+      white-space:nowrap;
+    }
+    .tab-btn.active{
+      color:var(--text);
+      background:rgba(255,255,255,.08);
+      border-color:rgba(255,255,255,.12);
+    }
+
+    .tab-panel{ display:none; }
+    .tab-panel.active{ display:block; }
+
+    /* === 3-column grids === */
+    .grid-3{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:16px;
+      margin-top:14px;
+      align-items:stretch;
+    }
+    @media (max-width: 980px){
+      .grid-3{ grid-template-columns:1fr; }
+    }
+
+    .feature-num{
+      font-weight:900;
+      margin-bottom:6px;
+      background:linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+
+    .step-num{
+      font-weight:900;
+      margin-bottom:6px;
+      color:var(--accent);
+    }
+
+    .list{
+      margin:10px 0 0;
+      padding-left:18px;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    /* Pricing */
+    .price{
+      font-size:30px;
+      font-weight:900;
+      letter-spacing:-.3px;
+      margin:6px 0 2px;
+    }
+    .per{ font-size:13px; color:var(--muted); margin:0 0 12px; }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      padding:6px 10px;
+      border-radius:999px;
+      margin-bottom:10px;
+      width:max-content;
+    }
+
+    /* Images in cards */
+    .card img{
+      width:100%;
+      border-radius:12px;
+      border:1px solid var(--line);
+      margin-top:10px;
+      background:#000;
+      display:block;
+    }
+
+    /* KPI */
+    .kpi{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:12px;
+      margin-top:14px;
+    }
+    @media(max-width:980px){
+      .kpi{ grid-template-columns:1fr; }
+    }
+    .kpi .card{ padding:16px; }
+    .kpi b{ display:block; font-size:14px; }
+    .kpi span{ display:block; color:var(--muted); font-size:13px; margin-top:4px; }
+
+    /* FAQ + Contact */
+    details{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 14px;
+      background:rgba(255,255,255,.03);
+    }
+    details + details{ margin-top:10px; }
+    summary{
+      cursor:pointer;
+      font-weight:900;
+      list-style:none;
+    }
+    summary::-webkit-details-marker{ display:none; }
+
+    .contact-form{
+      display:grid;
+      gap:14px;
+      margin-top:14px;
+    }
+    .form-row{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .form-row label{
+      font-size:14px;
+      font-weight:800;
+    }
+    .form-row input,
+    .form-row select,
+    .form-row textarea{
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 12px;
+      color:var(--text);
+      font-size:14px;
+    }
+    .form-row input::placeholder,
+    .form-row textarea::placeholder{
+      color:var(--muted);
+    }
+    .form-row input:focus,
+    .form-row select:focus,
+    .form-row textarea:focus{
+      outline:none;
+      border-color:rgba(96,165,250,.75);
+    }
+    .tiny{ font-size:12px; color:var(--muted); }
+
+    footer{
+      margin-top:22px;
+      color:var(--muted);
+      font-size:13px;
+      text-align:center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="layout">
+
+      <!-- LEFT: HERO always -->
+      <aside class="left">
+        <div class="brand">
+          <div class="logo"><span class="dot"></span>Scrim Keydrop Bot</div>
+          <a class="cta" href="YOUR_DISCORD_OAUTH2_INVITE_URL" target="_blank" rel="noopener">サーバーに追加</a>
+        </div>
+
+        <div class="card">
+          <div class="pill">Type-A｜運営支援BOT（配布）</div>
+          <h1>キー配布と進行を、確実に。</h1>
+          <p>
+            本BOT（Type-A）は <b>フォートナイトのスクリム運営</b>を対象としています。<br>
+            従来の進行はそのままに、<b>キー配布と進行管理だけを自動化</b>します。
+          </p>
+          <p class="muted">
+            他タイトルで導入したい場合は、<b>カスタムマッチ開催方法</b>について情報をご提供ください。<br>
+            内容を確認のうえ、BOT構築を検討します。
+          </p>
+
+          <hr class="hr">
+
+          <h3>Type-Aの基本フロー</h3>
+          <pre class="muted mono" style="margin:0; white-space:pre-wrap;">1) /admin_panel を実行
+2) スクリム情報をカレンダー登録
+3) キー送信先（CH/スレッド）を指定
+→ キー配布・進行を自動化</pre>
+
+          <div class="note-box">
+            閲覧制限（ロール・権限）はDiscordの仕様に準拠します。<b>BOTは閲覧制御を行いません。</b><br>
+            ※例外として、キーホスト申請については、ボタンにロール制限を付けています。
+          </div>
+        </div>
+      </aside>
+
+      <!-- RIGHT: tabs + content -->
+      <section class="right">
+        <div class="tabs-bar">
+          <div class="tabs">
+            <button class="tab-btn active" data-tab="features">できること</button>
+            <button class="tab-btn" data-tab="install">導入手順</button>
+            <button class="tab-btn" data-tab="howto">使い方</button>
+            <button class="tab-btn" data-tab="pricing">料金</button>
+            <button class="tab-btn" data-tab="new-scrim">新しいスクリムの形へ</button>
+            <button class="tab-btn" data-tab="support">FAQ・お問い合わせ</button>
+          </div>
+        </div>
+
+        <!-- できること（追加：④⑤） -->
+        <section class="tab-panel active" id="features">
+          <h2>できること（Type-A）</h2>
+
+          <div class="grid-3">
+            <div class="card">
+              <div class="feature-num">① カスタムキーの自動送信</div>
+              <p>
+                管理パネルで指定した <b>チャンネルまたはスレッド</b>に、
+                設定した日時で <b>カスタムキーを自動送信</b>します。<br>
+                カスタムキーもBOTが自動生成します。
+              </p>
+              <ul class="list">
+                <li>送信先は管理パネルで指定</li>
+                <li>閲覧制限はDiscordの権限設定に準拠（BOTでは制御しません）</li>
+                <li>※DMで配布していたサーバーは運用方法が変わることになります</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <div class="feature-num">② ボタン1つで自動進行</div>
+              <p>
+                進行上の報告・申請をボタン化し、運営の手動進行を減らします。
+              </p>
+              <ul class="list">
+                <li>キーホスト：待機列作成完了</li>
+                <li>ビクロイ者：リプレイデータ提出</li>
+                <li>運営でキーホストができない場合、参加者からキーホストを募ることができます。</li>
+                <li>※例外として、キーホスト申請については、ボタンにロール制限を付けています。</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <div class="feature-num">③ 緊急時の手動送信対応</div>
+              <p>
+                万が一自動送信できなかった場合でも、手動送信ボタンで対応が可能です。
+              </p>
+              <ul class="list">
+                <li>事故対応の保険として運用できます</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <div class="feature-num">④ 選べるキー形式</div>
+              <p>
+                管理パネルでカスタムキーの形式を選択できます。
+              </p>
+              <ul class="list">
+                <li>数字のみ</li>
+                <li>英数字</li>
+                <li>固定文字列＋数字</li>
+                <li>固定文字列＋英数字</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <div class="feature-num">⑤ 優先キー配布対応</div>
+              <p>
+                優先キー設定を「オン」で、<b>一般チャンネルへのキー画像送信前</b>に、<b>優先チャンネル</b>へキー画像を送信できます。
+              </p>
+              <ul class="list">
+                <li>優先配布：ON/OFF 切り替え</li>
+                <li>優先送信先：チャンネル（またはスレッド）を指定</li>
+                <li class="muted">※閲覧制限（ロール等）はDiscordの権限設定に準拠します</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- 導入手順（3カラム） -->
+        <section class="tab-panel" id="install">
+          <h2>BOT導入手順</h2>
+          <p class="muted">導入前に一度だけ行う手順です。</p>
+
+          <div class="grid-3">
+            <div class="card">
+              <div class="step-num">①</div>
+              <h3>BOTをサーバーに入れる</h3>
+              <p class="muted">招待URLからBOTを導入します。</p>
+            </div>
+
+            <div class="card">
+              <div class="step-num">②</div>
+              <h3>「KEYDROP」ロールを作る</h3>
+              <p>コマンド実行に必要なロールです。</p>
+              <p class="muted">閲覧ロールはBOT関係なく、サーバーごとの運用方法に影響しません。</p>
+            </div>
+
+            <div class="card">
+              <div class="step-num">③</div>
+              <h3><span class="mono">/keydrop_apply</span> で利用開始申請</h3>
+              <p>利用開始申請を送信します。</p>
+              <p class="muted">初回申請は <b>トライアル14日間</b> が開始されます。</p>
+            </div>
+          </div>
+
+          <div class="note-box">
+            フリープラン（14日間）のスクリム登録は <b>3件まで</b> です。
+          </div>
+        </section>
+
+        <!-- 使い方（3カラム＋スクショ） -->
+        <section class="tab-panel" id="howto">
+          <h2>使い方</h2>
+          <p class="muted">運用開始後の基本操作です。</p>
+
+          <div class="grid-3">
+            <div class="card">
+              <div class="step-num">STEP 1</div>
+              <h3>運営用チャンネルで <span class="mono">/admin_panel</span> を実行</h3>
+              <p class="muted">管理パネルを出す</p>
+              <img src="使い方01.png" alt="使い方 STEP1（管理パネル）">
+            </div>
+
+            <div class="card">
+              <div class="step-num">STEP 2</div>
+              <h3>スクリム情報をカレンダーに登録</h3>
+              <p class="muted">開催情報を登録する</p>
+              <img src="使い方02.png" alt="使い方 STEP2（カレンダー登録）">
+            </div>
+
+            <div class="card">
+              <div class="step-num">STEP 3</div>
+              <h3>管理パネルで送信先CHなどを設定</h3>
+              <p class="muted">各情報の送信先（CH/スレッド等）を指定する</p>
+              <img src="使い方03.png" alt="使い方 STEP3（送信先設定）">
+            </div>
+          </div>
+        </section>
+
+        <!-- 料金（3カラムずつ：上段=月額 / 下段=初回フリー・大会スポット・補足） -->
+        <section class="tab-panel" id="pricing">
+          <h2>料金</h2>
+          <p class="muted">
+            Type-Aはサーバー単位の月額プランです。<br>
+            上限は「スクリム登録件数」を基準としています。
+          </p>
+
+          <!-- 上段：ライト｜ベーシック｜プラス -->
+          <div class="grid-3">
+            <div class="card">
+              <h3>ライト</h3>
+              <div class="price">¥1,000</div>
+              <p class="per">/ 月</p>
+              <ul class="list">
+                <li>スクリム登録：<b>月5件まで</b></li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <h3>ベーシック</h3>
+              <div class="price">¥1,800</div>
+              <p class="per">/ 月</p>
+              <ul class="list">
+                <li>スクリム登録：<b>月10件まで</b></li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <h3>プラス</h3>
+              <div class="price">¥2,500</div>
+              <p class="per">/ 月</p>
+              <ul class="list">
+                <li>スクリム登録：<b>無制限</b></li>
+                <li class="muted">※サーバー内でフリー開催を許可している場合など</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 下段：初回フリー｜大会スポット｜補足 -->
+          <div class="grid-3">
+            <div class="card">
+              <h3>初回フリー</h3>
+              <div class="price">¥0</div>
+              <p class="per">/ 14日間</p>
+              <ul class="list">
+                <li>スクリム登録：<b>3件まで</b></li>
+              </ul>
+              <div class="note-box">
+                初回の <span class="mono">/keydrop_apply</span> 申請で開始します。
+              </div>
+            </div>
+
+            <div class="card">
+              <h3>大会スポット（要相談）</h3>
+              <p class="muted">
+                大会・大規模イベントなど、通常のスクリム運用とは異なる用途での利用については
+                <b>事前にご相談ください</b>。
+              </p>
+              <ul class="list">
+                <li>開催規模・日数・運用内容を確認のうえ個別対応</li>
+                <li>料金目安：<b>1日 ¥500 程度</b></li>
+                <li class="muted">（月額プラン加入中：1日 ¥300 程度）</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <h3>補足</h3>
+              <ul class="list">
+                <li>「スクリム登録件数」＝カレンダーに登録する開催情報の件数</li>
+                <li>Type-B（新しいスクリムの形）は本料金（Type-A）には含まれません</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- 新しいスクリムの形（Type-B思想） -->
+        <section class="tab-panel" id="new-scrim">
+          <h2>新しいスクリムの形へ</h2>
+
+          <p class="muted">
+            まず前提：対象ゲームはフォートナイトです。<br>
+            他タイトルでも導入したい場合は、カスタムマッチ開催方法について情報を提供いただき、BOT構築を検討します。
+          </p>
+
+          <div class="card" style="margin-top:14px;">
+            <h3>従来のスクリム</h3>
+            <p>
+              運営が設定した時間に参加者が一斉にキー入力。<br>
+              早期敗退者は次のマッチまで空き時間化しやすい。
+            </p>
+          </div>
+
+          <div class="card" style="margin-top:14px;">
+            <h3>Type-Bの目的</h3>
+            <p>
+              <b>100人マッチの定員</b>でマッチ枠を締め切り、全体の参加状況を見ながら枠を選べるようにすることで、
+              参加者の体験向上を目指します。
+            </p>
+            <ul class="list">
+              <li>100人上限で、1つのマッチ枠を締め切る</li>
+              <li>上限の7割到達で、次のマッチ枠の募集中も開始</li>
+              <li>参加枠の確保申請 → 基準となる枠数到達でキー配布開始</li>
+              <li>全体の参加状況を見ながら、参加する枠を選ぶこともできる</li>
+            </ul>
+          </div>
+
+          <div class="note-box">
+            Type-Bは、参加者のスクリム体験向上を目的とした開催形式を安定化させるためのシステムです。<br>
+            体験向上の対価として、システムの使用料を参加者自身に支払ってもらう形を目指しているため、配布はしません。
+          </div>
+        </section>
+
+        <!-- FAQ・お問い合わせ -->
+        <section class="tab-panel" id="support">
+          <h2>FAQ</h2>
+
+          <details>
+            <summary>Q. キーはどこに送られますか？</summary>
+            <p class="muted">管理パネルで指定したチャンネル、またはスレッドに送信されます。</p>
+          </details>
+
+          <details>
+            <summary>Q. ロールによる閲覧制限はBOTで行いますか？</summary>
+            <p class="muted">
+              ロールによる閲覧制限を設けるなどは、Discordの仕様によります。BOTでは制御しておりません。<br>
+              ※例外として、キーホスト申請については、ボタンにロール制限を付けています。
+            </p>
+          </details>
+
+          <details>
+            <summary>Q. 運営でキーホストができない場合は？</summary>
+            <p class="muted">参加者からキーホストを募ることができます。</p>
+          </details>
+
+          <details>
+            <summary>Q. トライアル期間はありますか？</summary>
+            <p class="muted">
+              初回申請時にフリープラン（14日間）が開始されます。スクリム登録は3件までです。
+            </p>
+          </details>
+
+          <details>
+            <summary>Q. 大会利用は可能ですか？</summary>
+            <p class="muted">要相談です。規模・日数・運用内容を確認のうえ個別に対応します。</p>
+          </details>
+
+          <hr class="hr">
+
+          <h2>お問い合わせ</h2>
+          <p class="muted">FAQで解決しない場合はこちらから送信してください（現在は仮フォーム）。</p>
+
+          <form class="card contact-form" onsubmit="handleSubmit(event)">
+            <div class="form-row">
+              <label>お問い合わせ種別</label>
+              <select required>
+                <option value="">選択してください</option>
+                <option>導入について</option>
+                <option>料金・プランについて</option>
+                <option>大会利用の相談</option>
+                <option>その他</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <label>Discordユーザー名</label>
+              <input type="text" placeholder="例：UserName#1234" required />
+            </div>
+
+            <div class="form-row">
+              <label>サーバー名（任意）</label>
+              <input type="text" placeholder="導入予定・利用中のサーバー名" />
+            </div>
+
+            <div class="form-row">
+              <label>お問い合わせ内容</label>
+              <textarea rows="5" placeholder="ご相談内容を入力してください" required></textarea>
+            </div>
+
+            <button type="submit" class="cta">送信する</button>
+
+            <p class="tiny" style="margin:10px 0 0;">
+              ※ 送信後、Discordでの追加確認をお願いする場合があります。
+            </p>
+          </form>
+        </section>
+
+        <footer>© Scrim Keydrop Bot（仮）</footer>
+      </section>
+
+    </div>
+  </div>
+
+  <script>
+    const btns = document.querySelectorAll(".tab-btn[data-tab]");
+    const panels = document.querySelectorAll(".tab-panel");
+
+    btns.forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        btns.forEach(b=>b.classList.remove("active"));
+        panels.forEach(p=>p.classList.remove("active"));
+        btn.classList.add("active");
+        const target = document.getElementById(btn.dataset.tab);
+        if(target) target.classList.add("active");
+
+        const bar = document.querySelector(".tabs-bar");
+        if (bar) bar.scrollIntoView({behavior:"smooth", block:"start"});
+      });
+    });
+
+    function handleSubmit(e){
+      e.preventDefault();
+      alert("送信されました（※現在は仮フォームです）");
+    }
+  </script>
+</body>
+</html>
