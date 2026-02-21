@@ -254,6 +254,16 @@
       display:block;
     }
 
+    /* ★追加：Videos in cards（画像と同じ見た目にする） */
+    .card video{
+      width:100%;
+      border-radius:12px;
+      border:1px solid var(--line);
+      margin-top:10px;
+      background:#000;
+      display:block;
+    }
+
     /* FAQ + Contact */
     details{
       border:1px solid var(--line);
@@ -322,12 +332,8 @@
             対象ゲーム：FORTNITE
           </p>
           <p class="muted">
-            2026年3月 本格運用開始予定<br>
-            ただいま、テスト導入していただくサーバー様を募集しています<br><br>
-            ＜募集要項＞<br>
-            　・テスト期間：1か月程度<br>
-            　・社会人を対象としたスクリム<br>
-            　・運用の感想や価格感などをフィードバックしていただく
+            他タイトルで導入したい場合は、<b>カスタムマッチ開催方法</b>について情報をご提供ください。<br>
+            内容を確認のうえ、BOT構築を検討します。
           </p>
 
           <hr class="hr">
@@ -416,6 +422,19 @@
                 <li class="muted">※閲覧制限（ロール等）はDiscordの権限設定に準拠します</li>
               </ul>
             </div>
+
+            <!-- ★追加：デモ動画 -->
+            <div class="card">
+              <div class="feature-num">デモ動画</div>
+              <video
+                src="keydrop_demo.mp4"
+                controls
+                playsinline
+                preload="metadata"
+                poster="demo_poster.jpg"
+                aria-label="Scrim Keydrop Bot デモ動画"
+              ></video>
+            </div>
           </div>
         </section>
 
@@ -427,7 +446,7 @@
             <div class="card">
               <div class="feature-num">① 利用開始申請</div>
               <p><span class="mono">/keydrop_apply</span> を実行します。</p>
-              <p class="muted">BOTの利用開始申請を行います。申請内容はKEYDROP BOT管理サーバーに送信されます。<br><br>※テスト導入期間は不要です</p>
+              <p class="muted">BOTの利用開始申請を行います。申請内容はKEYDROP BOT管理サーバーに送信されます。</p>
             </div>
 
             <div class="card">
@@ -438,7 +457,6 @@
                 <li>PayPay</li>
                 <li>Stripe（準備中）</li>
               </ul>
-              <p class="muted"><br>※テスト導入期間は不要です</p>
             </div>
 
             <div class="card">
@@ -533,13 +551,12 @@
             </div>
 
             <div class="card">
-              <h3>大会スポット（準備中）</h3>
+              <h3>大会等スポット利用（準備中）</h3>
               <p class="muted">
-                大会・大規模イベントなど、通常のスクリム運用とは異なる用途での利用については
-                <b>事前にご相談ください</b>。
+                大会や単発のスクリム開催など、常設スクリム運用とは異なる用途でもご利用いただけるように準備を進めています。<br><br>
+                例）大会利用の場合
               </p>
               <ul class="list">
-                <li>開催規模・日数・運用内容を確認のうえ個別対応</li>
                 <li>料金目安：<b>1日 ¥500 程度</b></li>
                 <li class="muted">（月額プラン加入中：1日 ¥300 程度）</li>
               </ul>
@@ -589,7 +606,7 @@
           <details>
             <summary>Q. ロールによる閲覧制限はBOTで行いますか？</summary>
             <p class="muted">
-              ロールによる閲覧制限を設けるなどは、Discordの仕様によります。BOTでは制御しておりません。<br>
+              ロールによる閲覧制限を設けるなどは、Discordの仕様によります。BOTでは制御しません。<br>
               ※例外として、キーホスト申請については、ボタンにロール制限を付けています。
             </p>
           </details>
@@ -656,7 +673,3 @@
   </script>
 </body>
 </html>
-
-
-
-
